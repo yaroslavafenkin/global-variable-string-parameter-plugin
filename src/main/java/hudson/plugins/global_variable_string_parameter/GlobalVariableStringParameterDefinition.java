@@ -25,20 +25,17 @@ package hudson.plugins.global_variable_string_parameter;
 
 import hudson.Extension;
 import hudson.model.ParameterValue;
-import hudson.model.Hudson;
 import hudson.model.StringParameterDefinition;
 import hudson.model.StringParameterValue;
-import hudson.slaves.NodeProperty;
-import hudson.slaves.EnvironmentVariablesNodeProperty;
+import hudson.util.FormValidation;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
@@ -48,27 +45,41 @@ import org.kohsuke.stapler.StaplerRequest;
  * @since 1.0
  * @see {@link StringParameterDefinition}
  */
-public class GlobalVariableStringParameterDefinition extends StringParameterDefinition {
+public class GlobalVariableStringParameterDefinition extends
+		StringParameterDefinition {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	// search for variables of the form ${VARNAME} or $NoWhiteSpace
+	private static final Pattern pattern = Pattern.compile("\\$\\{(.+)\\}|\\$(.+)\\s?"); 
 
 	@DataBoundConstructor
-	public GlobalVariableStringParameterDefinition(String name, String defaultValue, String description) {
+	public GlobalVariableStringParameterDefinition(String name,
+			String defaultValue, String description) {
 		super(name, defaultValue, description);
 	}
 
 	@Override
 	public ParameterValue createValue(String value) {
-		return new StringParameterValue(super.getName(), replaceGlobalEnvVars(value), super.getDescription());
+		return new StringParameterValue(super.getName(),
+				replaceGlobalVars(value), super.getDescription());
 	}
 
 	@Override
 	public ParameterValue createValue(StaplerRequest req, JSONObject jo) {
-		jo.put("value", replaceGlobalEnvVars(jo.getString("value")));
-		return (StringParameterValue) req.bindJSON(StringParameterValue.class, jo);
+		// Replace any global variables inside the json
+		jo.put("value", replaceGlobalVars(jo.getString("value")));
+		return (StringParameterValue) req.bindJSON(StringParameterValue.class,
+				jo);
 	}
 
 	@Override
 	public StringParameterValue getDefaultParameterValue() {
-		return new StringParameterValue(super.getName(), replaceGlobalEnvVars(super.getDefaultValue()), super.getDescription());
+		return new StringParameterValue(super.getName(),
+				replaceGlobalVars(super.getDefaultValue()),
+				super.getDescription());
 	}
 
 	@Extension
@@ -77,30 +88,35 @@ public class GlobalVariableStringParameterDefinition extends StringParameterDefi
 		public String getDisplayName() {
 			return "Global Variable String Parameter";
 		}
-	}
-
-	private String replaceGlobalEnvVars(String str) {
-		Map map = new HashMap<String, String>();
-		// get global properties
-		for (NodeProperty nodeProperty : Hudson.getInstance().getGlobalNodeProperties()) {
-			if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {
-				map.putAll(((EnvironmentVariablesNodeProperty) nodeProperty).getEnvVars());
-			}
+		
+		public FormValidation doCheckPort(@QueryParameter String value) {
+		  if(globalVarExists(value))  return FormValidation.ok();
+		  else                return FormValidation.error("Global Variable " + value + " does not exist");
 		}
-
-		// search for variables of the from ${VARNAME}
-		Pattern pattern = Pattern.compile("\\$\\{.+?\\}");
+	}
+	
+	public static boolean globalVarExists(String str){
 		Matcher m = pattern.matcher(str);
 		while (m.find()) {
-			String s = m.group();
-			// strip the variable indicator
-			String varName = s.replaceAll("[${}]", "");
-			// find the value of the variable
-			String varVal = (String) map.get(varName);
+			// If ${VARNAME} match found, return that group, else return $NoWhiteSpace group
+			String globalVariable = (m.group(1) != null) ? m.group(1) : m.group(2);
+			String globalValue = GlobalNodeProperties.getValue(globalVariable);
+			if (globalValue != null) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-			// replace ${var} with the expanded environment variable
-			if (varVal != null) {
-				str = str.replace(s, varVal);
+	public static String replaceGlobalVars(String str) {
+		Matcher m = pattern.matcher(str);
+		while (m.find()) {
+			// If ${VARNAME} match found, return that group, else return $NoWhiteSpace group
+			String globalVariable = (m.group(1) != null) ? m.group(1) : m.group(2);
+			String globalValue = GlobalNodeProperties.getValue(globalVariable);
+			if (globalValue != null) {
+				//Replace the full match (group 0) to remove any $ and {}
+				str = str.replace(m.group(0), globalValue);
 			}
 		}
 		return str;
