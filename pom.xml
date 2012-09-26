@@ -24,9 +24,9 @@
 	<artifactId>global-variable-string-parameter</artifactId>
 	<packaging>hpi</packaging>
 	<name>Global Variable String Parameter</name>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<description>Allow usage of global variables in string parameter</description>
-	<url></url>
+	<url />
 
 	<scm>
 		<connection>scm:git:git://github.com/pmaccamp/global-variable-string-parameter.git</connection>
@@ -98,7 +98,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -117,7 +117,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -139,7 +139,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -163,7 +163,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -182,7 +182,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -199,7 +199,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
