@@ -28,6 +28,12 @@
 	<description>Allow usage of global variables in string parameter</description>
 	<url></url>
 
+	<scm>
+		<connection>scm:git:git://github.com/pmaccamp/global-variable-string-parameter.git</connection>
+		<developerConnection>scm:git:git@github.com:pmaccamp/global-variable-string-parameter.git</developerConnection>
+		<url>http://github.com/pmaccamp/global-variable-string-parameter</url>
+	</scm>
+	
 	<developers>
 		<developer>
 			<name>Patrick McKeown</name>
