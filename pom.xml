@@ -24,7 +24,7 @@
 	<artifactId>global-variable-string-parameter</artifactId>
 	<packaging>hpi</packaging>
 	<name>Global Variable String Parameter</name>
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 	<description>Allow usage of global variables in string parameter</description>
 	<url />
 
