@@ -8,11 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GlobalNodeProperties {
-	private static GlobalNodeProperties instance = null;
 	private static final Map<String, String> NODE_PROPERTIES = new HashMap<String, String>();
 
     private static void updateGlobalNodeProperties() { 
-    	// get global properties
+    	//clear current properties
+    	NODE_PROPERTIES.clear();
+    	//get latest global properties
 		for (NodeProperty<?> nodeProperty : Hudson.getInstance()
 				.getGlobalNodeProperties()) {
 			if (nodeProperty instanceof EnvironmentVariablesNodeProperty) {

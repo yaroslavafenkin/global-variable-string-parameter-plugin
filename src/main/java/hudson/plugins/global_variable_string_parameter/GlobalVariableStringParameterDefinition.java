@@ -24,13 +24,18 @@
 package hudson.plugins.global_variable_string_parameter;
 
 import hudson.Extension;
+import hudson.model.AutoCompletionCandidates;
 import hudson.model.ParameterValue;
 import hudson.model.StringParameterDefinition;
 import hudson.model.StringParameterValue;
 import hudson.util.FormValidation;
 
+import java.io.IOException;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
@@ -89,10 +94,24 @@ public class GlobalVariableStringParameterDefinition extends
 			return "Global Variable String Parameter";
 		}
 		
-		public FormValidation doCheckPort(@QueryParameter String value) {
-		  if(globalVarExists(value))  return FormValidation.ok();
-		  else                return FormValidation.error("Global Variable " + value + " does not exist");
+		public FormValidation doCheckGlobalName(@QueryParameter String value)  throws IOException, ServletException {
+		  if(!value.contains("$") || globalVarExists(value))  
+			  return FormValidation.ok();
+		  else 
+			  return FormValidation.error("Global Variable " + value.replaceAll("\\$|\\{|\\}", "") + " does not exist");
 		}
+
+        public AutoCompletionCandidates doAutoCompleteGlobalName(@QueryParameter String value) {
+            AutoCompletionCandidates candidates = new AutoCompletionCandidates();
+            Set<String> propNames = GlobalNodeProperties.getProperties().keySet();
+            for (String name: propNames) {
+            	// Autocomplete global variables with or without the ${} special characters
+                if (name.startsWith(value.replaceAll("\\$|\\{|\\}", "")) || name.startsWith(value)) {
+                	candidates.add("${" + name + "}");
+                }
+            }
+            return candidates;
+        }
 	}
 	
 	public static boolean globalVarExists(String str){
