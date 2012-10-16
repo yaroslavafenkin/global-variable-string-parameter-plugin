@@ -20,7 +20,7 @@ Example
 5.  The variable remains unsubstituted on the Build Now page<dd>
 ![parameterbuildnow](https://github.com/pmaccamp/global-variable-string-parameter/raw/master/images/parameterbuildnow.PNG "parameterbuildnow")<br>
 6.  But is correctly substituted in the console output<dd>
-![echoparameter](https://github.com/pmaccamp/global-variable-string-parameter/raw/master/images/echoparameter.PNG "echoparameter")<br>
+![console](https://github.com/pmaccamp/global-variable-string-parameter/raw/master/images/console.PNG "console")<br>
 7.  The variable can also be changed from the build now screen to be incorrect<dd>
 ![buildnow2](https://github.com/pmaccamp/global-variable-string-parameter/raw/master/images/buildnow2.PNG "buildnow2")<br>
 8.  And no longer substitutes<dd>
