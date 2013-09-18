@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2004-2009, Sun Microsystems, Inc., Kohsuke Kawaguchi, Luca Domenico Milanesio, Tom Huybrechts
+ * Copyright (c) 2013, Patrick McKeown
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,99 +45,100 @@ import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * String based parameter that supports substituting global variables.
- * 
+ *
  * @author Patrick McKeown
  * @since 1.0
  * @see {@link StringParameterDefinition}
  */
-public class GlobalVariableStringParameterDefinition extends
-		StringParameterDefinition {
+public class GlobalVariableStringParameterDefinition extends StringParameterDefinition {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	// search for variables of the form ${VARNAME} or $NoWhiteSpace
-	private static final Pattern pattern = Pattern.compile("\\$\\{(.+)\\}|\\$(.+)\\s?"); 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    // search for variables of the form ${VARNAME} or $NoWhiteSpace
+    private static final Pattern pattern = Pattern.compile("\\$\\{(.+)\\}|\\$(.+)\\s?");
 
-	@DataBoundConstructor
-	public GlobalVariableStringParameterDefinition(String name,
-			String defaultValue, String description) {
-		super(name, defaultValue, description);
-	}
+    @DataBoundConstructor
+    public GlobalVariableStringParameterDefinition(String name,
+            String defaultValue, String description) {
+        super(name, defaultValue, description);
+    }
 
-	@Override
-	public ParameterValue createValue(String value) {
-		return new StringParameterValue(super.getName(),
-				replaceGlobalVars(value), super.getDescription());
-	}
+    @Override
+    public ParameterValue createValue(String value) {
+        return new StringParameterValue(super.getName(),
+                replaceGlobalVars(value), super.getDescription());
+    }
 
-	@Override
-	public ParameterValue createValue(StaplerRequest req, JSONObject jo) {
-		// Replace any global variables inside the json
-		jo.put("value", replaceGlobalVars(jo.getString("value")));
-		return (StringParameterValue) req.bindJSON(StringParameterValue.class,
-				jo);
-	}
+    @Override
+    public ParameterValue createValue(StaplerRequest req, JSONObject jo) {
+        // Replace any global variables inside the json
+        jo.put("value", replaceGlobalVars(jo.getString("value")));
+        return (StringParameterValue) req.bindJSON(StringParameterValue.class,
+                jo);
+    }
 
-	@Override
-	public StringParameterValue getDefaultParameterValue() {
-		return new StringParameterValue(super.getName(),
-				replaceGlobalVars(super.getDefaultValue()),
-				super.getDescription());
-	}
+    @Override
+    public StringParameterValue getDefaultParameterValue() {
+        return new StringParameterValue(super.getName(),
+                replaceGlobalVars(super.getDefaultValue()),
+                super.getDescription());
+    }
 
-	@Extension
-	public static class DescriptorImpl extends ParameterDescriptor {
-		@Override
-		public String getDisplayName() {
-			return "Global Variable String Parameter";
-		}
-		
-		public FormValidation doCheckGlobalName(@QueryParameter String value)  throws IOException, ServletException {
-		  if(!value.contains("$") || globalVarExists(value))  
-			  return FormValidation.ok();
-		  else 
-			  return FormValidation.error("Global Variable " + value.replaceAll("\\$|\\{|\\}", "") + " does not exist");
-		}
+    @Extension
+    public static class DescriptorImpl extends ParameterDescriptor {
+
+        @Override
+        public String getDisplayName() {
+            return "Global Variable String Parameter";
+        }
+
+        public FormValidation doCheckGlobalName(@QueryParameter String value) throws IOException, ServletException {
+            if (!value.contains("$") || globalVarExists(value)) {
+                return FormValidation.ok();
+            } else {
+                return FormValidation.error("Global Variable " + value.replaceAll("\\$|\\{|\\}", "") + " does not exist");
+            }
+        }
 
         public AutoCompletionCandidates doAutoCompleteGlobalName(@QueryParameter String value) {
             AutoCompletionCandidates candidates = new AutoCompletionCandidates();
             Set<String> propNames = GlobalNodeProperties.getProperties().keySet();
-            for (String name: propNames) {
-            	// Autocomplete global variables with or without the ${} special characters
+            for (String name : propNames) {
+                // Autocomplete global variables with or without the ${} special characters
                 if (name.startsWith(value.replaceAll("\\$|\\{|\\}", "")) || name.startsWith(value)) {
-                	candidates.add("${" + name + "}");
+                    candidates.add("${" + name + "}");
                 }
             }
             return candidates;
         }
-	}
-	
-	public static boolean globalVarExists(String str){
-		Matcher m = pattern.matcher(str);
-		while (m.find()) {
-			// If ${VARNAME} match found, return that group, else return $NoWhiteSpace group
-			String globalVariable = (m.group(1) != null) ? m.group(1) : m.group(2);
-			String globalValue = GlobalNodeProperties.getValue(globalVariable);
-			if (globalValue != null) {
-				return true;
-			}
-		}
-		return false;
-	}
+    }
 
-	public static String replaceGlobalVars(String str) {
-		Matcher m = pattern.matcher(str);
-		while (m.find()) {
-			// If ${VARNAME} match found, return that group, else return $NoWhiteSpace group
-			String globalVariable = (m.group(1) != null) ? m.group(1) : m.group(2);
-			String globalValue = GlobalNodeProperties.getValue(globalVariable);
-			if (globalValue != null) {
-				//Replace the full match (group 0) to remove any $ and {}
-				str = str.replace(m.group(0), globalValue);
-			}
-		}
-		return str;
-	}
+    public static boolean globalVarExists(String str) {
+        Matcher m = pattern.matcher(str);
+        while (m.find()) {
+            // If ${VARNAME} match found, return that group, else return $NoWhiteSpace group
+            String globalVariable = (m.group(1) != null) ? m.group(1) : m.group(2);
+            String globalValue = GlobalNodeProperties.getValue(globalVariable);
+            if (globalValue != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String replaceGlobalVars(String str) {
+        Matcher m = pattern.matcher(str);
+        while (m.find()) {
+            // If ${VARNAME} match found, return that group, else return $NoWhiteSpace group
+            String globalVariable = (m.group(1) != null) ? m.group(1) : m.group(2);
+            String globalValue = GlobalNodeProperties.getValue(globalVariable);
+            if (globalValue != null) {
+                //Replace the full match (group 0) to remove any $ and {}
+                str = str.replace(m.group(0), globalValue);
+            }
+        }
+        return str;
+    }
 }

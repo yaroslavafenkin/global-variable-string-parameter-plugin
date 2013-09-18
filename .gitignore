@@ -6,3 +6,4 @@ target
 *.ipr
 *.iws
 work
+nb-configuration.xml
