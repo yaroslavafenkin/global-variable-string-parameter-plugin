@@ -20,7 +20,7 @@
     <artifactId>global-variable-string-parameter</artifactId>
     <packaging>hpi</packaging>
     <name>Global Variable String Parameter</name>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
     <description>Allow usage of global variables in string parameter</description>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/Global+Variable+String+Parameter+Plugin</url>
 	
