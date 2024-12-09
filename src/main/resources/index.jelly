@@ -1,6 +1,7 @@
 <!--
   This view is used to render the plugin list page.
 -->
+<?jelly escape-by-default='true'?>
 <div>
   Adds a new parameter type called Global Variable Parameter which supports using ${GLOBAL_VARIABLES} in string parameters.
 </div>

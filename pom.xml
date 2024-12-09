@@ -6,29 +6,42 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.525</version>
+        <version>4.88</version>
+        <relativePath/>
     </parent>
 
-    <distributionManagement>
-        <repository>
-            <id>maven.jenkins-ci.org</id>
-            <url>http://maven.jenkins-ci.org:8081/content/repositories/releases/</url>
-        </repository>
-    </distributionManagement>
-
-    <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>global-variable-string-parameter</artifactId>
     <packaging>hpi</packaging>
     <name>Global Variable String Parameter</name>
-    <version>1.3-SNAPSHOT</version>
+    <version>${revision}${changelist}</version>
     <description>Allow usage of global variables in string parameter</description>
-    <url>http://wiki.jenkins-ci.org/display/JENKINS/Global+Variable+String+Parameter+Plugin</url>
-	
+    <url>https://github.com/${gitHubRepo}</url>
+
     <scm>
-        <connection>scm:git:ssh://github.com/jenkinsci/global-variable-string-parameter-plugin.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/global-variable-string-parameter-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/global-variable-string-parameter-plugin</url>
+        <connection>scm:git:https://github.com/${gitHubRepo}</connection>
+        <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+        <tag>${scmTag}</tag>
+        <url>https://github.com/${gitHubRepo}</url>
     </scm>
+
+    <properties>
+        <revision>1.3</revision>
+        <changelist>-SNAPSHOT</changelist>
+        <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
+        <jenkins.version>2.440.3</jenkins.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.jenkins.tools.bom</groupId>
+                <artifactId>bom-2.440.x</artifactId>
+                <version>3435.v238d66a_043fb_</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 	
     <developers>
         <developer>
@@ -46,28 +59,22 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version>1.3</version>
-        </dependency>            
     </dependencies>
 	
     <!-- get every artifact through maven.glassfish.org, which proxies all the artifacts that we need -->
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
+            <url>https://repo.jenkins-ci.org/public/</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>repo.jenkins-ci.org</id>
-            <url>http://repo.jenkins-ci.org/public/</url>
+            <url>https://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
 </project>

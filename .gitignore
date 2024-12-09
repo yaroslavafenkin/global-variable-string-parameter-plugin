@@ -7,3 +7,6 @@ target
 *.iws
 work
 nb-configuration.xml
+
+# IntelliJ IDEA project files
+.idea
