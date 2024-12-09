@@ -29,10 +29,8 @@ THE SOFTWARE.
 	<f:entry title="${it.name}" description="${it.description}">
 		<div name="parameter" description="${it.description}">
 			<input type="hidden" name="name" value="${it.name}" />
-			<f:textbox name="value" 
-					   field="globalName" 
-					   value="${it.defaultValue}" 
-					   checkUrl="'${it.rootUrl}/descriptor/hudson.plugins.global_variable_string_parameter.GlobalVariableStringParameterDefinition/checkGlobalName?value=' + encodeURIComponent(this.value)"/>
+			<f:textbox name="value" field="globalName" value="${it.defaultValue}" checkDependsOn=""
+					   checkUrl="${it.rootUrl}/descriptor/hudson.plugins.global_variable_string_parameter.GlobalVariableStringParameterDefinition/checkGlobalName"/>
 		</div>
 	</f:entry>
 </j:jelly>
